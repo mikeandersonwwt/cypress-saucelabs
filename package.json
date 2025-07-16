@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/mikeandersonwwt/cypress-saucelabs#readme",
   "devDependencies": {
-    "cypress": "^14.5.1"
+    "cypress": "^14.5.1",
+    "cypress-plugin-tab": "^1.0.5"
   }
 }

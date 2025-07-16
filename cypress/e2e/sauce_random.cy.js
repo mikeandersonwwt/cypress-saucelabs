@@ -148,5 +148,4 @@ describe('Sauce Random Stuff', () => {
     cy.readFile('cypress/fixtures/output.txt').should('eq', 'Hello, World!')
   })
 
-
 })
