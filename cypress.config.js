@@ -5,6 +5,15 @@ module.exports = defineConfig({
     baseUrl: "https://www.saucedemo.com",
     setupNodeEvents(on, config) {
       // implement node event listeners here
+
+      // for the .task() command
+      on('task', {
+        logToTerminal(message) {
+          console.log('Terminal log from Cypress:', message);
+          return null;
+        },
+      });
+
     },
   },
 });

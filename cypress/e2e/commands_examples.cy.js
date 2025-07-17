@@ -1,5 +1,6 @@
 // Examples of the commands listed here: https://docs.cypress.io/api/table-of-contents
 import 'cypress-plugin-tab'
+import 'cypress-localstorage-commands'; 
 /// <reference types="cypress" />
 
 describe('Commands', () => {
@@ -14,6 +15,7 @@ describe('Commands', () => {
     cy.getDataTest('username').type('standard_user');
     cy.getDataTest('password').type('secret_sauce');
     cy.getDataTest('login-button').click();
+    Cypress.config("chromeWebSecurity", false)
   });
 
 //*********************
@@ -21,9 +23,9 @@ describe('Commands', () => {
 //*********************
 //https://docs.cypress.io/api/table-of-contents#Queries
 
-  context.skip('Queries', () => {
+  context('Queries', () => {
     
-    it('.as()', () => {
+    it.only('.as()', () => {
       cy.getDataTest("header-container").as('header');
       cy.get('@header').contains('Swag Labs');
     })
@@ -206,7 +208,6 @@ describe('Commands', () => {
         cy.root().should('have.class', 'inventory_item')
         cy.root().find('.inventory_item_name').should('exist')
       })
-
       // Outside within(), root() is the default document
       cy.root().should('match', 'html')
     })
@@ -223,6 +224,7 @@ describe('Commands', () => {
     
       // yields [#shadow-root (open)]
       //cy.get('.shadow-host').shadow().find('.my-button').click()
+      cy.task('logToTerminal', "saucedemo doesn't have shadow");
     })
 
     it('.siblings()', () => {
@@ -252,7 +254,7 @@ describe('Commands', () => {
 //*********************
 //https://docs.cypress.io/api/table-of-contents#Assertions
 
-  context.skip('Assertions', () => {
+  context('Assertions', () => {
     
     it('.and()', () => {
       cy.getDataTest('add-to-cart-sauce-labs-backpack')
@@ -269,7 +271,6 @@ describe('Commands', () => {
         .should('have.text', 'Add to cart')
         .click()
     })
-
   })
 
 //*********************
@@ -277,12 +278,13 @@ describe('Commands', () => {
 //*********************
 //https://docs.cypress.io/api/table-of-contents#Actions
 
-  context.skip('Actions', () => {
+  context('Actions', () => {
     
     it('.check()', () => {
       //saucedemo doesn't have checkboxes or radio buttons so here's an example.
       //see https://docs.cypress.io/api/commands/check
       //cy.get('value').check().should('be.checked');
+      cy.task('logToTerminal', "saucedemo doesn't have checkboxes or radio buttons");
     })
 
 
@@ -336,6 +338,7 @@ describe('Commands', () => {
       //saucedemo doesn't have any file inputs so here's an example
       //see https://docs.cypress.io/api/commands/selectfile
       //cy.get('#file-input').selectFile(['cypress/fixtures/file1.txt'])
+      cy.task('logToTerminal', "saucedemo doesn't have file inputs");
     })
 
     it('.trigger()', () => {
@@ -354,6 +357,7 @@ describe('Commands', () => {
       //saucedemo doesn't have checkboxes or radio buttons so here's an example.
       //see https://docs.cypress.io/api/commands/uncheck
       //cy.get('value').uncheck().should('be.unchecked');
+      cy.task('logToTerminal', "saucedemo doesn't have checkboxes or radio buttons");
     })
   })
 
@@ -389,19 +393,13 @@ describe('Commands', () => {
     })
 
     it('.clearAllSessionStorage()', () => {
-      // Set a session storage item to clear
+      // Set a session storage item to clear and verify it's there
       cy.window().then((win) => {
         win.sessionStorage.setItem('test', '1234');
-      });
-
-      // Verify it's there
-      cy.window().then((win) => {
         expect(win.sessionStorage.getItem('test')).to.equal('1234');
       });
-
+      // Clear and confirm it's removed
       cy.clearAllSessionStorage();
-
-      // Confirm it's removed
       cy.window().then((win) => {
         expect(win.sessionStorage.getItem('test')).to.be.null;
       });
@@ -437,10 +435,11 @@ describe('Commands', () => {
       // pauses test execution
       //see https://docs.cypress.io/api/commands/debug
       //cy.debug()
-      cy.getDataTest('inventory-container')
-        .debug()
-        .find('.inventory_item')
-        .should('have.length', 6)
+      // cy.getDataTest('inventory-container')
+      //   .debug()
+      //   .find('.inventory_item')
+      //   .should('have.length', 6)
+      cy.task('logToTerminal', '.debug() pauses test execution until you manually restart it');
     })
 
     it('.each()', () => {
@@ -486,5 +485,251 @@ describe('Commands', () => {
         .should('be.focused')
     })
 
+    it('.getAllCookies()', () => {
+      cy.getAllCookies().should('have.length.gt', 0)
+    })
+
+    it('.getAllLocalStorage()', () => {
+      // set a local storage value to verify
+      cy.window().then((win) => {
+        win.localStorage.setItem('test', '1234');
+        expect(win.localStorage.getItem('test')).to.equal('1234');
+      })
+      cy.getAllLocalStorage().then((storage) => {
+        expect(storage['https://www.saucedemo.com']).to.have.property('test', '1234')
+      })
+    })
+
+    it('.getAllSessionStorage()', () => {
+      // set a session storage value to verify
+      cy.window().then((win) => {
+        win.sessionStorage.setItem('test', '1234');
+        expect(win.sessionStorage.getItem('test')).to.equal('1234');
+      })
+      cy.getAllSessionStorage().then((storage) => {
+        expect(storage['https://www.saucedemo.com']).to.have.property('test', '1234')
+      })
+    })
+
+    it('.getCookie()', () => {
+      cy.getCookie('session-username').should('exist')
+    })
+
+    it('.getCookies()', () => {
+      cy.getCookies().should('have.length.gt', 0)
+    })
+
+    it('.go()', () => {
+      cy.go('back') //navigate back a page
+      cy.go('forward') //navigate forward a page
+    })
+
+    it('.hover()', () => {
+      cy.task('logToTerminal', 'cy.hover() is not available, see https://docs.cypress.io/api/commands/hover');
+    })
+
+    it('.intercept()', () => {
+      cy.intercept('POST', 'https://events.backtrace.io/**', {
+        statusCode: 200,
+        body: {},
+      }).as('backtrace');
+    })
+
+    it('.log()', () => {
+      cy.log('Test message')
+    })
+
+    it('.mount()', () => {
+      cy.task('logToTerminal', 'cy.mount() is used for component testing and this is e2e. see https://docs.cypress.io/api/commands/mount');
+    })
+
+    it('.origin()', () => {
+      // Visit different origin
+      cy.origin('https://the-internet.herokuapp.com/', () => {
+        cy.visit('/checkboxes')
+        cy.url().should('include', 'the-internet.herokuapp.com') //verify
+      })
+      // Back to original site
+      cy.visit('https://www.saucedemo.com')
+      cy.url().should('include', 'saucedemo.com')
+    })
+
+    it('.pause()', () => {
+      // pauses the session until you manually hit the resume button in the browser
+      //cy.pause()
+      cy.task('logToTerminal', '.pause() pauses the session until you manually hit the resume button in the browser');
+    })
+
+    it('.press()', () => {
+      // it's better to use {} for native key events
+      //cy.press(Cypress.Keyboard.Keys.TAB) is the only compatible key
+      cy.task('logToTerminal', '.press() is not available, see https://docs.cypress.io/api/commands/press');
+    })
+
+    it('.readFile()', () => {
+      cy.writeFile('cypress/fixtures/output.txt', '') // clear it first
+      cy.writeFile('cypress/fixtures/output.txt', 'Hello, World!')
+      cy.readFile('cypress/fixtures/output.txt').should('eq', 'Hello, World!')
+    })
+  
+    it('.reload()', () => {
+      cy.reload()
+    })
+
+    it('.request() + API example', () => {
+      cy.request('https://www.saucedemo.com').its('status').should('eq', 200)
+      
+      // cy.request({
+      //   method: 'POST',
+      //   url: 'https://example.com/api/login',
+      //   body: {
+      //     email: 'testuser@example.com',
+      //     password: 'testpassword',
+      //   },
+      // }).should((response) => {
+      //   expect(response.status).to.eq(200)
+      //   expect(response.body).to.have.property('token')
+      // })
+    })
+
+    it('.screenshot()', () => {
+      // takes a screenshot and saves to cypress/screenshots folder
+      //cy.screenshot();
+    })
+
+    it('.session()', () => {
+      // Session already being created with the beforeEach but here's an example
+      // cy.session('standard_user', () => {
+      //   cy.visit('https://www.saucedemo.com')
+      //   cy.getDataTest('username').type('standard_user')
+      //   cy.getDataTest('password').type('secret_sauce')
+      //   cy.getDataTest('login-button').click()
+      // })
+      
+      // // Visit page after session is created
+      // cy.visit('https://www.saucedemo.com')
+    })
+
+    it('.setCookie()', () => {
+      cy.setCookie('test-cookie', 'test-value')
+      cy.getCookie('test-cookie')
+        .should('have.property', 'value', 'test-value')
+    })
+
+    it('.spread()', () => {
+      // Get product details from page
+      cy.getDataTest('inventory-item').first()
+        .find('.inventory_item_name, .inventory_item_price')
+        .then(($els) => {
+          // Use spread to work with both elements at once
+          cy.wrap([$els.eq(0).text(), $els.eq(1).text()])
+            .spread((name, price) => {
+              // Log and verify the product details
+              cy.log(`Found product: ${name} at ${price}`)
+              expect(name).to.equal('Sauce Labs Backpack')
+              expect(price).to.equal('$29.99')
+            })
+        })
+    })
+
+    it('.spy()', () => {
+      // Create an object with a method we can spy on
+      const cart = {
+        addItem: (name) => `Added ${name} to cart`
+      }
+      // Create spy on the addItem method and call the method
+      cy.spy(cart, 'addItem').as('addItemSpy')
+      cart.addItem('Sauce Labs Backpack')
+      // Verify the spy
+      cy.get('@addItemSpy')
+        .should('have.been.called')
+        .and('have.been.calledWith', 'Sauce Labs Backpack')
+    })
+
+    it('.stub()', () => {
+      // Generic example - Stub Math.random to always return 1
+      cy.stub(Math, 'random').returns(1).as('randomStub')
+      // Use Math.random and verify stub worked
+      const result = Math.random()
+      cy.get('@randomStub')
+        .should('have.been.called')
+        .and('have.returned', 1)
+    })
+
+    it('.submit()', () => {
+      cy.go('back');
+      cy.getDataTest('username').type('standard_user');
+      cy.getDataTest('password').type('secret_sauce');
+      cy.get('.login-box form').submit();
+      cy.url().should('include', '/inventory.html')
+    })
+
+    it('.task()', () => {
+      // This command requires configuration in cypress.config.js
+      // logs a command in the browser, not the console
+      cy.task('logToTerminal', 'This is a test message from Cypress');
+    })
+
+    it('.then()', () => {
+      cy.go('back')
+      cy.fixture('examples').then(({ username, password }) => {
+        cy.getDataTest('username').type(username)
+        cy.getDataTest('password').type(password)
+        cy.getDataTest('login-button').click();
+      })
+    })  
+    
+    it('.tick()', () => {
+      cy.clock() // must call clock before tick
+      cy.tick(2000) // advance the clock by the specified number of milliseconds
+    })
+
+    it('.viewport()', () => {
+      // For a list of devices see https://docs.cypress.io/api/commands/viewport
+      cy.viewport('iphone-x')
+      cy.getDataTest('inventory-item-sauce-labs-backpack-img').should('be.visible')
+      // Desktop view
+      cy.viewport(1280, 720)
+      cy.getDataTest('inventory-item-sauce-labs-backpack-img').should('be.visible')
+    })
+
+    it('.visit()', () => {
+      cy.visit('https://www.saucedemo.com')
+    })
+
+    it('.wait()', () => {
+      cy.wait(500)
+    })
+
+    it('.within()', () => {
+      // Work with elements inside first inventory item
+      cy.getDataTest('inventory-item').first()
+        .within(() => {
+          // These selectors only work within the first item
+          cy.getDataTest('inventory-item-name').should('contain', 'Sauce Labs Backpack')
+          cy.getDataTest('inventory-item-price').should('contain', '$29.99')
+          cy.getDataTest('add-to-cart-sauce-labs-backpack').click()
+        })
+    })
+
+    it('.wrap()', () => {
+      cy.go('back')
+      // Wrap a simple object and verify its properties
+      const user = {
+        username: 'standard_user',
+        password: 'secret_sauce'
+      }
+      cy.wrap(user).then((credentials) => {
+        cy.getDataTest('username').type(credentials.username)
+        cy.getDataTest('password').type(credentials.password)
+        cy.getDataTest('login-button').click()
+      })
+    })
+
+    it('.writeFile()', () => {
+      cy.writeFile('cypress/fixtures/output.txt', '') // clear it first
+      cy.writeFile('cypress/fixtures/output.txt', 'Hello, World!')
+      cy.readFile('cypress/fixtures/output.txt').should('eq', 'Hello, World!')
+    })
   })
 })
