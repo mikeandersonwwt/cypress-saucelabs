@@ -1,6 +1,6 @@
 // Examples of the commands listed here: https://docs.cypress.io/api/table-of-contents
 import 'cypress-plugin-tab'
-
+/// <reference types="cypress" />
 
 describe('Commands', () => {
   beforeEach( () => {
@@ -11,12 +11,18 @@ describe('Commands', () => {
     }).as('backtrace');
 
     cy.visit('https://www.saucedemo.com/');
-    cy.get('[data-test="username"]').type('standard_user');
-    cy.get('[data-test="password"]').type('secret_sauce');
-    cy.get('[data-test="login-button"]').click();
-});
+    cy.getDataTest('username').type('standard_user');
+    cy.getDataTest('password').type('secret_sauce');
+    cy.getDataTest('login-button').click();
+  });
+
+//*********************
+//      QUERIES
+//*********************
+//https://docs.cypress.io/api/table-of-contents#Queries
+
+  context.skip('Queries', () => {
     
-  context('Queries', () => {
     it('.as()', () => {
       cy.getDataTest("header-container").as('header');
       cy.get('@header').contains('Swag Labs');
@@ -66,7 +72,7 @@ describe('Commands', () => {
       .contains('Add to cart')
     })
 
-    it.only('.focused()', () => {
+    it('.focused()', () => {
       // needs the cypress-plugin-tab for tab
       cy.visit('https://www.saucedemo.com')
       cy.get('body').tab() // if using the cypress-plugin-tab
@@ -241,8 +247,244 @@ describe('Commands', () => {
     })
   })
 
+//*********************
+//     ASSERTIONS
+//*********************
+//https://docs.cypress.io/api/table-of-contents#Assertions
+
+  context.skip('Assertions', () => {
+    
+    it('.and()', () => {
+      cy.getDataTest('add-to-cart-sauce-labs-backpack')
+        .should('exist')
+        .and('be.visible')
+        .and('have.text', 'Add to cart')
+        .click()
+    })
+
+    it('.should()', () => {
+      cy.getDataTest('add-to-cart-sauce-labs-backpack')
+        .should('exist')
+        .should('be.visible')
+        .should('have.text', 'Add to cart')
+        .click()
+    })
+
+  })
+
+//*********************
+//      ACTIONS
+//*********************
+//https://docs.cypress.io/api/table-of-contents#Actions
+
+  context.skip('Actions', () => {
+    
+    it('.check()', () => {
+      //saucedemo doesn't have checkboxes or radio buttons so here's an example.
+      //see https://docs.cypress.io/api/commands/check
+      //cy.get('value').check().should('be.checked');
+    })
 
 
+    it('.clear()', () => {
+      cy.go('back');
+      cy.getDataTest('username').type('standard_user');
+      cy.getDataTest('password').type('secret_sauce');
+      cy.getDataTest('username').clear().should('be.empty');
+      cy.getDataTest('password').clear().should('be.empty');
+    })
 
+    it('.click()', () => {
+      cy.getDataTest('add-to-cart-sauce-labs-fleece-jacket').click();
+      cy.getDataTest('add-to-cart-sauce-labs-fleece-jacket').should('not.exist');
+    })
 
+    it('.dblclick()', () => {
+      // Double click the remove button and verify it still is at remove
+      cy.getDataTest('add-to-cart-sauce-labs-fleece-jacket').click();
+      cy.getDataTest('remove-sauce-labs-fleece-jacket').dblclick();
+      cy.getDataTest('add-to-cart-sauce-labs-fleece-jacket').should('not.exist');
+    })
+
+    it('.rightclick()', () => {
+      // Right click on product image and verify it's still visible after
+      cy.getDataTest('add-to-cart-sauce-labs-fleece-jacket').rightclick();
+      cy.getDataTest('add-to-cart-sauce-labs-fleece-jacket').should('be.visible');
+    })
+
+    it('.scrollIntoView()', () => {
+      cy.getDataTest('footer').scrollIntoView();
+    })
+
+    it('.scrollTo()', () => {
+      cy.getDataTest('footer').scrollTo('bottom', { ensureScrollable: false }); // scroll to an element. Using "{ ensureScrollable: false }" because element is not scrollable
+      cy.getDataTest('header-container').scrollTo('top', { ensureScrollable: false });
+    })
+
+    it('.select()', () => {
+      // filter page results
+      cy.getDataTest('product-sort-container').as('filter')
+      cy.get('@filter').select('Name (Z to A)')
+      cy.get('@filter').should('have.value', 'za')
+      cy.get('@filter').select('Price (low to high)')
+      cy.get('@filter').should('have.value', 'lohi')
+      cy.get('@filter').select('Name (A to Z)')
+      cy.get('@filter').should('have.value', 'az')
+    })
+
+    it('.selectFile()', () => {
+      //saucedemo doesn't have any file inputs so here's an example
+      //see https://docs.cypress.io/api/commands/selectfile
+      //cy.get('#file-input').selectFile(['cypress/fixtures/file1.txt'])
+    })
+
+    it('.trigger()', () => {
+      cy.getDataTest('add-to-cart-sauce-labs-fleece-jacket')
+        .trigger('mouseover').click();
+      cy.getDataTest('remove-sauce-labs-fleece-jacket').should('be.visible');
+    })
+
+    it('.type()', () => {
+      cy.go('back');
+      cy.getDataTest('username').type('standard_user');
+      cy.getDataTest('password').type('secret_sauce');
+    })
+
+    it('.uncheck()', () => {
+      //saucedemo doesn't have checkboxes or radio buttons so here's an example.
+      //see https://docs.cypress.io/api/commands/uncheck
+      //cy.get('value').uncheck().should('be.unchecked');
+    })
+  })
+
+//*********************
+//      OTHER
+//*********************
+// https://docs.cypress.io/api/table-of-contents#Other-Commands
+
+  context('Other Commands', () => {
+    
+    it('.blur()', () => {
+      cy.go('back')
+      cy.getDataTest('username')
+        .type('standard_user')
+        .should('be.focused')
+      cy.getDataTest('username')
+        .blur()
+        .should('not.be.focused')
+    })
+
+    it('.clearAllCookies()', () => {
+      cy.getCookies().should('have.length.gt', 0)
+      cy.clearAllCookies();
+      cy.getCookies().should('have.length', 0)
+    })
+
+    it('.clearAllLocalStorage()', () => {
+      // Add item to cart to create localStorage data
+      cy.getDataTest('add-to-cart-sauce-labs-backpack').click()
+      cy.clearAllLocalStorage()
+      cy.reload()
+      cy.getDataTest('shopping-cart-badge').should('not.exist')
+    })
+
+    it('.clearAllSessionStorage()', () => {
+      // Set a session storage item to clear
+      cy.window().then((win) => {
+        win.sessionStorage.setItem('test', '1234');
+      });
+
+      // Verify it's there
+      cy.window().then((win) => {
+        expect(win.sessionStorage.getItem('test')).to.equal('1234');
+      });
+
+      cy.clearAllSessionStorage();
+
+      // Confirm it's removed
+      cy.window().then((win) => {
+        expect(win.sessionStorage.getItem('test')).to.be.null;
+      });
+    })
+
+    it('.clearCookie()', () => {
+      cy.clearCookie('session-username')
+      cy.reload()
+      cy.getDataTest('login-button').should('be.visible')
+    })
+
+    it('.clearCookies()', () => {
+      cy.getCookies().should('have.length.gt', 0)
+      cy.clearCookies();
+      cy.getCookies().should('have.length', 0)
+    })
+
+    it('.clearLocalStorage()', () => {
+      // Add item to cart to create localStorage data
+      cy.getDataTest('add-to-cart-sauce-labs-backpack').click()
+      cy.clearLocalStorage()
+      cy.reload()
+      cy.getDataTest('shopping-cart-badge').should('not.exist')
+    })
+
+    it('.clock()', () => {
+      // Set clock to fixed time
+      const fixedDate = new Date(2025, 0, 1).getTime() // January 1, 2025
+      cy.clock(fixedDate)
+    })
+
+    it('.debug()', () => {
+      // pauses test execution
+      //see https://docs.cypress.io/api/commands/debug
+      //cy.debug()
+      cy.getDataTest('inventory-container')
+        .debug()
+        .find('.inventory_item')
+        .should('have.length', 6)
+    })
+
+    it('.each()', () => {
+      // Verify each product has a price with $ symbol
+      cy.getDataTest('inventory-item-price').each(($price) => {
+        expect($price.text()).to.include('$');
+      });
+    })
+
+    it('.end()', () => {
+      // Start with Add to Cart button
+      cy.getDataTest('add-to-cart-sauce-labs-backpack')
+        .click()
+        .should('not.exist')
+      // End the chain and start a new one
+      .end()
+      // Verify cart badge
+      .getDataTest('shopping-cart-badge')
+        .should('contain', '1')
+    })
+
+    it('.exec()', () => {
+      // Execute a function
+      cy.exec('echo "Hello World"').then((result) => {
+        expect(result.stdout).to.equal('Hello World')
+      })
+    })
+
+    it('.fixture()', () => {
+      cy.go('back')
+      cy.fixture('examples').then(({ username, password }) => {
+        cy.getDataTest('username').type(username)
+        cy.getDataTest('password').type(password)
+        cy.getDataTest('login-button').click();
+        cy.getDataTest("header-container").contains('Swag Labs');
+      })
+    })
+
+    it('.focus()', () => {
+      cy.go('back')
+      cy.getDataTest('username')
+        .focus()
+        .should('be.focused')
+    })
+
+  })
 })
