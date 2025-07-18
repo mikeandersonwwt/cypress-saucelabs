@@ -150,4 +150,11 @@ describe('Sauce Random Stuff', () => {
     cy.readFile('cypress/fixtures/output.txt').should('eq', 'Hello, World!')
   })
 
+   it('Use enter key', () => {
+    cy.visit('/');
+    cy.getDataTest('username').type('standard_user');
+    cy.getDataTest('password').type('secret_sauce{enter}');
+    cy.url().should('include', '/inventory.html')
+  });
+
 })

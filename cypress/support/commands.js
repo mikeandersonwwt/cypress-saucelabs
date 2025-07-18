@@ -38,7 +38,7 @@ Cypress.Commands.addQuery('getDataTest', (selector) => {
     };
 });
 
-Cypress.Commands.add('login', (username, password) => {
+Cypress.Commands.add('loginSauce', (username, password) => {
   cy.visit('/');
   cy.getDataTest('username').type(username);
   cy.getDataTest('password').type(password);
