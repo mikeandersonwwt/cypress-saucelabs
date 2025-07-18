@@ -78,14 +78,16 @@ describe('Sauce Random Stuff', () => {
       .contains('visual_user')
   });
 
-  // use fixtures to supply mock data to your tests. See "fixtures" folder
+  // use fixtures to supply mock data to your tests. See "fixtures" folder.
+  // this uses the "users.json" file and loops through each
   it('Fixtures', () => {
-    cy.visit('');
-    cy.fixture('examples').then(({ username, password }) => {
-      cy.getDataTest('username').type(username)
-      cy.getDataTest('password').type(password)
-      cy.getDataTest('login-button').click();
-      cy.getDataTest("header-container").contains('Swag Labs');
+    cy.fixture('users').its('data').then(users => {
+      users.forEach(({ username, password }) => {
+        cy.visit('');
+        cy.getDataTest('username').type(username)
+        cy.getDataTest('password').type(password)
+        cy.getDataTest('login-button').click()
+      })
     })
   })
 
@@ -126,7 +128,7 @@ describe('Sauce Random Stuff', () => {
   })
 
   // Make a request
-  it.only('Request + API example', () => {
+  it('Request + API example', () => {
     cy.request('https://www.saucedemo.com').its('status').should('eq', 200)
     
     // cy.request({

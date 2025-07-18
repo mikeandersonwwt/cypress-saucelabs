@@ -9,7 +9,7 @@ module.exports = defineConfig({
       // for the .task() command
       on('task', {
         logToTerminal(message) {
-          console.log('Terminal log from Cypress:', message);
+          console.log('TEST NOTE:', message);
           return null;
         },
       });

@@ -15,7 +15,6 @@ describe('Commands', () => {
     cy.getDataTest('username').type('standard_user');
     cy.getDataTest('password').type('secret_sauce');
     cy.getDataTest('login-button').click();
-    Cypress.config("chromeWebSecurity", false)
   });
 
 //*********************
@@ -25,7 +24,7 @@ describe('Commands', () => {
 
   context('Queries', () => {
     
-    it.only('.as()', () => {
+    it('.as()', () => {
       cy.getDataTest("header-container").as('header');
       cy.get('@header').contains('Swag Labs');
     })
