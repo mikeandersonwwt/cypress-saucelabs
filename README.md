@@ -2,4 +2,7 @@
 
 Random Cypress tests created for https://www.saucedemo.com/
 
-See Cypress/e2e folder for tests
+### Examples
+
+![Commands](example1.png)
+![Assertions](example2.png)

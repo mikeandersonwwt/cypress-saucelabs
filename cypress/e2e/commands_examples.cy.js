@@ -1,6 +1,5 @@
 // Examples of the commands listed here: https://docs.cypress.io/api/table-of-contents
 import 'cypress-plugin-tab'
-import 'cypress-localstorage-commands'; 
 /// <reference types="cypress" />
 
 describe('Commands', () => {
